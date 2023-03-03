@@ -21,7 +21,7 @@ from sklearn.metrics import f1_score, roc_auc_score, accuracy_score
 def treat(n, dfs):
     
     # Iterator
-    df = dfs[list(dfs.keys())[n-1]]
+    df = dfs[n]
     print("\nDataFrame Escolhido:", n, "anos pré-falência")
     
     # Leading with NA's
