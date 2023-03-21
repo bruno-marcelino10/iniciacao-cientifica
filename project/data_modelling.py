@@ -11,12 +11,14 @@ from sklearn.decomposition import PCA
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.neural_network import MLPClassifier
+from sklearn.svm import SVC
+#from xgboost import XGBoost
 
 # Otimização
 from sklearn.model_selection import train_test_split, GridSearchCV
 
 # Métricas de Avaliação: Classificação
-from sklearn.metrics import f1_score, roc_auc_score, accuracy_score
+from sklearn.metrics import precision_score, roc_auc_score, accuracy_score
 
 def treat(n, dfs):
     
@@ -42,7 +44,6 @@ def treat(n, dfs):
     pca = PCA()
     X_train = pca.fit_transform(X_train_norm)
     X_test = pca.transform(X_test_norm)
-    print("\nExplicação de Cada Componente:", pca.explained_variance_ratio_.cumsum().round(2))
     print("--------------------------------------------------")
     return X_train, X_test, y_train, y_test
 
@@ -68,10 +69,10 @@ def models(df, obj):
     # Random Forest
     if obj == "rf":
         modelo = RandomForestClassifier(random_state = 42)
-        parametros = {'max_depth': [1, 5, None], # Retirar
+        parametros = {#'max_depth': [1, 5, None], # Retirar
                       'min_samples_leaf': [1, 3, 5],
                       'min_samples_split': [2, 4],
-                      'n_estimators': [25, 50, 100], # Retirar
+                      #'n_estimators': [25, 50, 100], # Retirar
                       'criterion': ["gini", 'entropy']}
         
         modelo = GridSearchCV(modelo, parametros, n_jobs = -1, cv = 3, scoring = "roc_auc")
@@ -81,10 +82,10 @@ def models(df, obj):
     # Multi-Layer Perceptron
     if obj == "mlp":
         modelo = MLPClassifier(max_iter = 1000, random_state = 42)
-        parametros = {'hidden_layer_sizes': [(50,50), (50,100,50), (100,)],
+        parametros = {#'hidden_layer_sizes': [(50,50), (50,100,50), (100,)],
                       'activation': ['tanh', 'relu'],
                       'solver': ['sgd', 'adam', "lbfgs"],
-                      'alpha': [0.0001, 0.05],
+                      #'alpha': [0.0001, 0.05],
                       'learning_rate': ['constant','adaptive']}
 
         modelo = GridSearchCV(modelo, parametros, n_jobs = -1, cv = 3, scoring = "roc_auc")
@@ -95,11 +96,12 @@ def models(df, obj):
     y_pred = modelo.predict(X_test)
     
     # Classification Metrics
-    f1 = f1_score(y_test, y_pred) # Maximizar precision
+    prec = precision_score(y_test, y_pred) # Maximizar precision
     auc = roc_auc_score(y_test, y_pred)
     acc = accuracy_score(y_test, y_pred)
-    print("F1-Score:", round(f1,4))
+
+    print("Precisão:", round(prec,4))
     print("AUC:", round(auc,4))
     print("Acurácia:", round(acc,4))
     print("--------------------------------------------------")
-    return [f1, auc, acc, obj]
+    return [prec, auc, acc, obj]

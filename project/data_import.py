@@ -2,6 +2,7 @@ import pandas as pd
 
 def get_data():
 
+    print("Iniciando Importação...")
     data = dict()
     # Features
     sheet_id = "1xOPRcRkJrGzxb65dieEHrWHnqXYrrSpx7Ack3pr6Pdw"
@@ -28,5 +29,6 @@ def get_data():
     print("Número de Empresas (Target):", res)
     print("Número de Empresas (Features):", len(features.keys())) # Numero de empresas
     print("Empresas Faltando:", miss)
-
+    
+    print("Finalizando Importação...\n")
     return data
