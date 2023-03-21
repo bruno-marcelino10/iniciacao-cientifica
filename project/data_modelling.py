@@ -68,10 +68,10 @@ def models(df, obj):
     # Random Forest
     if obj == "rf":
         modelo = RandomForestClassifier(random_state = 42)
-        parametros = {'max_depth': [1, 5, None],
+        parametros = {'max_depth': [1, 5, None], # Retirar
                       'min_samples_leaf': [1, 3, 5],
                       'min_samples_split': [2, 4],
-                      'n_estimators': [25, 50, 100],
+                      'n_estimators': [25, 50, 100], # Retirar
                       'criterion': ["gini", 'entropy']}
         
         modelo = GridSearchCV(modelo, parametros, n_jobs = -1, cv = 3, scoring = "roc_auc")
@@ -95,7 +95,7 @@ def models(df, obj):
     y_pred = modelo.predict(X_test)
     
     # Classification Metrics
-    f1 = f1_score(y_test, y_pred)
+    f1 = f1_score(y_test, y_pred) # Maximizar precision
     auc = roc_auc_score(y_test, y_pred)
     acc = accuracy_score(y_test, y_pred)
     print("F1-Score:", round(f1,4))

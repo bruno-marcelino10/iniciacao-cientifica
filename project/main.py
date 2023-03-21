@@ -14,7 +14,7 @@ if __name__ == '__main__':
     dfs["target"] = prepare(dfs["target"])
 
     # Separa coluna com os indicadores
-    indicadores = list(dfs["features"]["BOMBRIL"].iloc[35:, 0]) 
+    indicadores = list(dfs["features"]["BOMBRIL"].iloc[35:, 0])
     
     # Cria uma lista com 5 dataframes contendo (empresas x indicadores) para cada ano pré-falência
     dfs = [wrangle(i, dfs, indicadores) for i in range(1,6)]    
