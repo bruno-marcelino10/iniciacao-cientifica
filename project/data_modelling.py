@@ -24,7 +24,7 @@ def treat(n, dfs):
     
     # Iterator
     df = dfs[n]
-    print("\nDataFrame Escolhido:", n, "anos pré-falência")
+    print("\nDataFrame Escolhido:", n+1, "anos pré-falência")
     
     # Leading with NA's
     df.dropna(inplace = True)
@@ -46,6 +46,9 @@ def treat(n, dfs):
     X_test = pca.transform(X_test_norm)
     print("--------------------------------------------------")
     return X_train, X_test, y_train, y_test
+
+def selectors(df, obj):
+    pass
 
 def models(df, obj):
     '''

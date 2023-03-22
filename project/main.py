@@ -1,7 +1,7 @@
 from data_import import get_data
 from data_prep import prepare, wrangle
-from data_modelling import treat, models 
-#from data_viz import create_plot
+from data_modelling import treat, selectors, models
+from data_viz import create_plot
 
 from dynaconf import Dynaconf
 import warnings
@@ -31,6 +31,7 @@ if __name__ == '__main__':
     tabela = []
     for i in range(5):
         df = treat(i, dfs) # tratamento prévio da base de i anos pré-falência
+        create_plot(i, df[0], df[2])
         for j in settings.models: 
             linha = models(df, j) # estimação dos modelos em cima desta base
             linha.append(i+1)
@@ -40,8 +41,7 @@ if __name__ == '__main__':
     df.rename(columns = {0: "Precisão", 1: "AUC", 2: "Acurácia", 3: "Modelo", 4: "Anos"}, inplace = True)
     df = round(df, 4)
 
-    print("-----------------------------")
-    print("Resultados Consolidados:")
+    print("\nResultados Consolidados:")
     print(df)
 
     end_time = time.time() # contagem do tempo de execução

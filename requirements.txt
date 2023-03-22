@@ -1,0 +1,7 @@
+dynaconf
+pandas
+sklearn
+matplotlib
+numpy
+seaborn
+openpyxl
