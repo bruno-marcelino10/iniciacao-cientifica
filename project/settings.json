@@ -1,4 +1,7 @@
 {
     "models" : ["log", "rf", "mlp"],
+
     "selectors": ["pca", "kpca", "lda"]
+
+    
 }

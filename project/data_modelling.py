@@ -5,7 +5,8 @@ import matplotlib.pyplot as plt
 
 # Pré-processamento dos Dados
 from sklearn.preprocessing import StandardScaler
-from sklearn.decomposition import PCA
+from sklearn.decomposition import PCA, KernelPCA
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 
 # Modelos Utilizados
 from sklearn.ensemble import RandomForestClassifier
@@ -37,20 +38,47 @@ def treat(n, dfs):
 
     # Standardizing
     scaler = StandardScaler()
-    X_train_norm = scaler.fit_transform(X_train)
-    X_test_norm = scaler.transform(X_test)
+    X_train_pad = scaler.fit_transform(X_train)
+    X_test_pad = scaler.transform(X_test)
     
-    # Principal Component Analysis
-    pca = PCA()
-    X_train = pca.fit_transform(X_train_norm)
-    X_test = pca.transform(X_test_norm)
-    print("--------------------------------------------------")
-    return X_train, X_test, y_train, y_test
+    return X_train_pad, X_test_pad, y_train, y_test
 
 def selectors(df, obj):
-    pass
+    '''
+    Entradas:
+    df: Tupla com X_train padronizado, X_test padronizado, y_train, y_test
+    obj: String definindo o tipo de modelo
+    
+    Saídas:
+    Tupla com X_train decomposto, X_test decomposto, y_train, y_test   
+    '''
+    
+    X_train_pad, X_test_pad, y_train, y_test = df
 
-def models(df, obj):
+    # Principal Component Analysis
+    if obj == "pca":
+        pca = PCA()
+        X_train = pca.fit_transform(X_train_pad)
+        X_test = pca.transform(X_test_pad)
+        print("Decomposição: PCA")
+
+    if obj == "kpca":
+        kpca = KernelPCA()
+        X_train = kpca.fit_transform(X_train_pad)
+        X_test = kpca.transform(X_test_pad)
+        print("Decomposição: Kernel PCA")
+
+    if obj == "lda":
+        lda = LinearDiscriminantAnalysis()
+        X_train = lda.fit_transform(X_train_pad, y_train)
+        X_test = lda.transform(X_test_pad)
+        print("Decomposição: LDA")
+
+    print("--------------------------------------------------")
+
+    return X_train, X_test, y_train, y_test
+
+def models(df, obj, selector):
     '''
     Entradas:
     df: Tupla com X_train, X_test, y_train, y_test
@@ -78,7 +106,7 @@ def models(df, obj):
                       #'n_estimators': [25, 50, 100], # Retirar
                       'criterion': ["gini", 'entropy']}
         
-        modelo = GridSearchCV(modelo, parametros, n_jobs = -1, cv = 3, scoring = "roc_auc")
+        modelo = GridSearchCV(modelo, parametros, n_jobs = -1, cv = 2, scoring = "precision")
         modelo.fit(X_train, y_train)
         print("Modelo: Random Forest")
     
@@ -91,9 +119,17 @@ def models(df, obj):
                       #'alpha': [0.0001, 0.05],
                       'learning_rate': ['constant','adaptive']}
 
-        modelo = GridSearchCV(modelo, parametros, n_jobs = -1, cv = 3, scoring = "roc_auc")
+        modelo = GridSearchCV(modelo, parametros, n_jobs = -1, cv = 2, scoring = "precision")
         modelo.fit(X_train, y_train)
         print("Modelo: Multi-Layer Perceptron")
+
+    if obj == "svm":
+        modelo = SVC(random_state = 42)
+        parametros = {'kernel' : ["poly", 'linear', 'rbf', 'sigmoid', 'precomputed']}
+
+        modelo = GridSearchCV(modelo, parametros, n_jobs = -1, cv = 2, scoring = "precision")
+        modelo.fit(X_train, y_train)
+        print("Modelo: Support Vector Classifier")
 
     # Predictions
     y_pred = modelo.predict(X_test)
@@ -107,4 +143,4 @@ def models(df, obj):
     print("AUC:", round(auc,4))
     print("Acurácia:", round(acc,4))
     print("--------------------------------------------------")
-    return [prec, auc, acc, obj]
+    return [prec, auc, acc, obj, selector]

@@ -8,7 +8,7 @@ import warnings
 import time
 import pandas as pd
 
-settings = Dynaconf(core_loaders=["JSON"], settings_files="settings.json")
+settings = Dynaconf(core_loaders=["JSON"], settings_files="project/settings.json")
 
 if __name__ == '__main__':
 
@@ -31,14 +31,16 @@ if __name__ == '__main__':
     tabela = []
     for i in range(5):
         df = treat(i, dfs) # tratamento prévio da base de i anos pré-falência
-        create_plot(i, df[0], df[2])
-        for j in settings.models: 
-            linha = models(df, j) # estimação dos modelos em cima desta base
-            linha.append(i+1)
-            tabela.append(linha)
+        create_plot(i, df[0], df[2]) # cria plots do t-SNE
+        for j in settings["SELECTORS"]:
+            df_decomp = selectors(df, j)
+            for k in settings["MODELS"]: 
+                linha = models(df_decomp, k, j) # estimação dos modelos em cima desta base
+                linha.append(i+1)
+                tabela.append(linha)
     
     df = pd.DataFrame(tabela) # criação de tabela com as métricas de avaliação para cada modelo em cada base
-    df.rename(columns = {0: "Precisão", 1: "AUC", 2: "Acurácia", 3: "Modelo", 4: "Anos"}, inplace = True)
+    df.rename(columns = {0: "Precisão", 1: "AUC", 2: "Acurácia", 3: "Modelo", 4: "Seletor", 5: "Anos"}, inplace = True)
     df = round(df, 4)
 
     print("\nResultados Consolidados:")
