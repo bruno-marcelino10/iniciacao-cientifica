@@ -45,6 +45,7 @@ if __name__ == '__main__':
 
     print("\nResultados Consolidados:")
     print(df)
+    df.to_excel("data/results.xlsx", index=False)
 
     end_time = time.time() # contagem do tempo de execução
     print("\nTempo decorrido: {:.2f} segundos".format(end_time - start_time))

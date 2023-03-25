@@ -1,6 +1,7 @@
 dynaconf
 pandas
-sklearn
+scikit-learn
+xgboost
 matplotlib
 numpy
 seaborn

@@ -1,7 +1,5 @@
 {
-    "models" : ["log", "rf", "mlp"],
+    "models" : ["log", "rf", "mlp", "svm", "xgb"],
 
     "selectors": ["pca", "kpca", "lda"]
-
-    
 }
